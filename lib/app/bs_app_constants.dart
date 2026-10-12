@@ -19,7 +19,8 @@
 class BsAppConstants {
   const BsAppConstants._();
 
-  static const defaultApiBaseUrl ='http://118.27.147.94:8000/';
+  // static const defaultApiBaseUrl ='http://118.27.147.94:8000/';
+  static const String defaultApiBaseUrl = 'http://118.27.147.94:8001';
   // static const defaultApiBaseUrl ='http://127.0.0.1:8000/';
   static const defaultPagePadding = 16.0;
   static const defaultCardRadius = 8.0;

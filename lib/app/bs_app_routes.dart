@@ -38,7 +38,7 @@ class BsAppRoutes {
     return GoRouter(
       initialLocation: '/',
       redirect: (context, state) {
-        // Add authentication redirect here later.
+        
         return null;
       },
       routes: [

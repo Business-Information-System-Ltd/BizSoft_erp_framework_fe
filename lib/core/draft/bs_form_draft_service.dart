@@ -30,8 +30,6 @@ class BsFormDraftService {
     Map<String, Object?> values,
   ) async {
     _drafts[key] = Map<String, Object?>.from(values);
-    // TODO: Persist low-risk drafts with shared_preferences or browser storage.
-    // TODO: Save important transaction drafts to backend when draft APIs exist.
   }
 
   Future<Map<String, Object?>?> loadDraft(BsFormSessionKey key) async {
