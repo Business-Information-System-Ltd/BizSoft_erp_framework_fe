@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 import '../../../../../core/api/bs_api_client.dart';
@@ -11,14 +9,27 @@ import '../dto/far_asset_update_request_dto.dart';
 
 class FarAssetApiService {
   FarAssetApiService(BsApiClient client)
-      : _crud = BsCrudApiService(
-          client: client,
-          basePath: '/api/erp-far/far/assets/',
-          
-
-        );
+    : _crud = BsCrudApiService(
+        client: client,
+        basePath: '/api/erp-far/far/assets/',
+      ),
+      _coreEntityCrud = BsCrudApiService(
+        client: client,
+        basePath: '/api/core-entity/',
+      ),
+      _organizationCrud = BsCrudApiService(
+        client: client,
+        basePath: '/api/organizations/units/',
+      ),
+      _partnerCrud = BsCrudApiService(
+        client: client,
+        basePath: '/api/partners/',
+      );
 
   final BsCrudApiService _crud;
+  final BsCrudApiService _coreEntityCrud;
+  final BsCrudApiService _organizationCrud;
+  final BsCrudApiService _partnerCrud;
 
   Future<List<FarAssetDto>> getFarAssets({
     String? status,
@@ -41,9 +52,7 @@ class FarAssetApiService {
 
     debugPrint('FAR ASSET FILTER PARAMS: $queryParameters');
 
-    final response = await _crud.list(
-      queryParameters: queryParameters,
-    );
+    final response = await _crud.list(queryParameters: queryParameters);
 
     debugPrint('FAR ASSET API RESPONSE: $response');
 
@@ -55,11 +64,7 @@ class FarAssetApiService {
 
     return results
         .whereType<Map>()
-        .map(
-          (item) => FarAssetDto.fromJson(
-            Map<String, dynamic>.from(item),
-          ),
-        )
+        .map((item) => FarAssetDto.fromJson(Map<String, dynamic>.from(item)))
         .toList();
   }
 
@@ -68,67 +73,88 @@ class FarAssetApiService {
     return FarAssetDto.fromJson(response);
   }
 
-  Future<FarAssetDto> createFarAsset(
-    FarAssetCreateRequestDto dto,
-  ) async {
-    debugPrint(
-      'FAR ASSET CREATE REQUEST: '
-      '${dto.toJson()}',
-    );
+  Future<FarAssetDto> createFarAsset(FarAssetCreateRequestDto dto) async {
+    debugPrint('FAR ASSET CREATE REQUEST: ${dto.toJson()}');
 
-    final response = await _crud.create(
-      dto.toJson(),
-    );
+    final response = await _crud.create(dto.toJson());
 
-    debugPrint(
-      'FAR ASSET CREATE RESPONSE: '
-      '$response',
-    );
+    debugPrint('FAR ASSET CREATE RESPONSE: $response');
 
-    return FarAssetDto.fromJson(
-      response,
-    );
+    return FarAssetDto.fromJson(response);
   }
 
   Future<FarAssetDto> updateFarAsset(
     int id,
     FarAssetUpdateRequestDto dto,
   ) async {
-    debugPrint(
-      'FAR ASSET UPDATE REQUEST: '
-      '${dto.toJson()}',
-    );
+    debugPrint('FAR ASSET UPDATE REQUEST: ${dto.toJson()}');
 
-    final response = await _crud.update(
-      id,
-      dto.toJson(),
-    );
+    final response = await _crud.update(id, dto.toJson());
 
-    debugPrint(
-      'FAR ASSET UPDATE RESPONSE: '
-      '$response',
-    );
+    debugPrint('FAR ASSET UPDATE RESPONSE: $response');
 
-    return FarAssetDto.fromJson(
-      response,
-    );
+    return FarAssetDto.fromJson(response);
   }
 
-
-  Future<void> deleteFarAsset(
-    int id,
-  ) {
+  Future<void> deleteFarAsset(int id) {
     return _crud.delete(id);
   }
+
   Future<void> updateFarAssetStatus({
     required int id,
     required String status,
   }) async {
-    await _crud.patch(
-      id,
-      {
-        'status': status,
-      },
-    );
+    await _crud.patch(id, {'status': status});
+  }
+
+  Future<List<Map<String, dynamic>>> getLegalEntities({
+    Map<String, dynamic>? query,
+  }) async {
+    final response = await _coreEntityCrud.list(queryParameters: query);
+
+    debugPrint('CORE ENTITY RESPONSE: $response');
+
+    final results = response['results'];
+
+    if (results is! List) return [];
+
+    return results
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getOrganizations({
+    Map<String, dynamic>? query,
+  }) async {
+    final response = await _organizationCrud.list(queryParameters: query);
+
+    debugPrint('ORGANIZATION RESPONSE: $response');
+
+    final results = response['results'];
+
+    if (results is! List) return [];
+
+    return results
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  Future<List<Map<String, dynamic>>> getPartners({
+    Map<String, dynamic>? query,
+  }) async {
+    final response = await _partnerCrud.list(queryParameters: query);
+
+    debugPrint('PARTNER RESPONSE: $response');
+
+    final results = response['results'];
+
+    if (results is! List) return [];
+
+    return results
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
   }
 }
